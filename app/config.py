@@ -7,10 +7,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Credentials
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-COLAB_API_URL = os.getenv("COLAB_API_URL", "").rstrip("/")
-PORT = int(os.getenv("PORT", "8000"))
 
 # Directories
 ASSETS_DIR = BASE_DIR / "assets"
@@ -43,4 +40,3 @@ VOICE_MAP = {
         "default": "en-US-JennyNeural"
     }
 }
-

@@ -76,7 +76,7 @@ async def generate_script(language: str = "bn", topic: str = "auto") -> dict:
         client = genai.Client(api_key=GEMINI_API_KEY)
         prompt = f"{system_instruction}\n\nTask: {user_query}\nGive me ONLY the spoken script, without quotes."
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-flash-latest",
             contents=prompt,
         )
         script_text = response.text.strip().replace('"', '')
