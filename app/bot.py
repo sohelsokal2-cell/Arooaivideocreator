@@ -26,13 +26,13 @@ user_sessions = {}
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handles /start command with an inviting welcome keyboard."""
     welcome_text = (
-        "👋 **স্বাগতম! আমি আপনার AI Stand-Up Comedy Reels Agent!**\n\n"
+        "👋 **স্বাগতম! আমি আপনার AI Stand-Up Reels Content Studio!**\n\n"
         "🎬 আমি আপনার জন্য:\n"
-        "• ভাইরাল কমেডি আইডিয়া ও স্ক্রিপ্ট লিখব\n"
-        "• মানুষের মতো স্বাভাবিক ভয়েস তৈরি করব\n"
-        "• স্টেজে দাঁড়ানো কমেডিয়ানের মুখে লিপ-সিঙ্ক করাব\n"
-        "• রঙিন রিলস ক্যাপশন ও ব্যাকগ্রাউন্ড মিউজিক বসিয়ে ভিডিও বানিয়ে দেব!\n\n"
-        "👉 শুরু করতে নিচের **'নতুন ভিডিও তৈরি করুন'** বাটনে চাপুন:"
+        "• ভাইরাল কমেডি আইডিয়া ও ডায়লগ লিখব\n"
+        "• মানুষের মতো প্রাকৃতিক নিউরাল ভয়েস (.mp3) তৈরি করব\n"
+        "• কমেডিয়ান চরিত্র ও পাঞ্চলাইন মিউজিক রেডি করব\n"
+        "• ভিডিও প্রিভিউ বানিয়ে আপনাকে সব প্রডাকশন ফাইল পাঠিয়ে দেব!\n\n"
+        "👉 শুরু করতে নিচের **'🎬 নতুন ভিডিও তৈরি করুন'** বাটনে চাপুন:"
     )
     keyboard = [
         [InlineKeyboardButton("🎬 নতুন ভিডিও তৈরি করুন", callback_data="action_new_video")]
@@ -104,12 +104,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Step 6: User Approves Script -> START FULL PRODUCTION!
     elif data == "script_approve":
-        await query.edit_message_text("🚀 **অনুমোদন পাওয়া গেছে! ভিডিও প্রোডাকশন শুরু হচ্ছে...**\n\n⏱️ অনুগ্রহ করে ১-২ মিনিট অপেক্ষা করুন...", parse_mode="Markdown")
+        await query.edit_message_text("🚀 **অনুমোদন পাওয়া গেছে! ভিডিও ও প্রডাকশন এসেট তৈরি শুরু হচ্ছে...**\n\n⏱️ অনুগ্রহ করে ১ মিনিট অপেক্ষা করুন...", parse_mode="Markdown")
         await execute_full_video_pipeline(query, session)
 
     # Cancel
     elif data == "script_cancel":
-        await query.edit_message_text("❌ ভিডিও তৈরি বাতিল করা হয়েছে। নতুন ভিডিওর জন্য /create লিখুন।")
+        await query.edit_message_text("❌ তৈরি বাতিল করা হয়েছে। নতুন ভিডিওর জন্য /create লিখুন।")
 
 async def text_message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handles text input when user types a custom topic."""
@@ -141,7 +141,7 @@ async def process_script_generation(target_msg, session: dict, is_callback: bool
     )
 
     keyboard = [
-        [InlineKeyboardButton("✅ Approve & Video বানাও", callback_data="script_approve")],
+        [InlineKeyboardButton("✅ Approve & Generate All", callback_data="script_approve")],
         [InlineKeyboardButton("🔄 স্ক্রিপ্ট পরিবর্তন করো", callback_data="script_regenerate")],
         [InlineKeyboardButton("❌ বাতিল", callback_data="script_cancel")]
     ]
@@ -153,12 +153,12 @@ async def process_script_generation(target_msg, session: dict, is_callback: bool
         await target_msg.edit_text(preview_text, reply_markup=reply_markup, parse_mode="Markdown")
 
 async def execute_full_video_pipeline(query, session: dict):
-    """Executes the 4-step zero-GPU production engine."""
+    """Executes production pipeline and delivers complete video + studio assets."""
     job_id = f"job_{uuid.uuid4().hex[:8]}"
 
     try:
         # Step 1: Voice Generation (Edge-TTS)
-        await query.message.reply_text("🎙️ **ধাপ ১/৪:** ন্যাচারাল নিউরাল ভয়েস এবং সাবটাইটেল টাইমকোড তৈরি হচ্ছে...")
+        await query.message.reply_text("🎙️ **ধাপ ১/৪:** ন্যাচারাল নিউরাল ভয়েস ও কথা তৈরি হচ্ছে...")
         voice_res = await generate_speech(
             text=session["script"],
             language=session["lang"],
@@ -166,17 +166,17 @@ async def execute_full_video_pipeline(query, session: dict):
             job_id=job_id
         )
 
-        # Step 2: Character Image Retrieval / Cloud Generation
+        # Step 2: Character Image
         await query.message.reply_text("🖼️ **ধাপ ২/৪:** কমেডিয়ান ক্যারেক্টার ফ্রেম প্রস্তুত করা হচ্ছে...")
-        char_prompt = "default" if session["character"] == "default" else f"comedian on stage {session['topic']}"
+        char_prompt = "default" if session["character"] == "default" else f"stand-up comedian on comedy stage {session['topic']}"
         char_path = await get_or_create_character(char_prompt, job_id=job_id)
 
-        # Step 3: Lip-Sync Animation
-        await query.message.reply_text("🎭 **ধাপ ৩/৪:** লিপ-সিঙ্ক ও ফেস মুভমেন্ট অ্যানিমেশন রেন্ডার হচ্ছে...")
+        # Step 3: Video Motion / Render
+        await query.message.reply_text("🎭 **ধাপ ৩/৪:** মোশন ভিডিও রেন্ডার করা হচ্ছে...")
         raw_video = await render_lip_sync(char_path, voice_res["audio_path"], job_id=job_id)
 
-        # Step 4: Video Compositing (Captions + Punchline Sound Effect)
-        await query.message.reply_text("✨ **ধাপ ৪/৪:** রঙিন রিলস সাবটাইটেল ও পাঞ্চলাইন মিউজিক জোড়া লাগানো হচ্ছে...")
+        # Step 4: Video Compositing (Captions + Beat Sound Effect)
+        await query.message.reply_text("✨ **ধাপ ৪/৪:** রঙিন রিলস সাবটাইটেল ও ড্রপ মিউজিক অ্যাসেম্বল করা হচ্ছে...")
         final_video = await compose_final_video(
             raw_video_path=raw_video,
             ass_path=voice_res["ass_path"],
@@ -184,15 +184,16 @@ async def execute_full_video_pipeline(query, session: dict):
             add_beat=True
         )
 
-        # Step 5: Deliver final video directly to Telegram chat
-        await query.message.reply_text("📤 **ভিডিও তৈরি সম্পন্ন! টেলিগ্রামে পাঠানো হচ্ছে...**")
+        # Step 5: Deliver completed video
+        await query.message.reply_text("🎉 **আপনার কমেডি রিলস প্রস্তুত! ভিডিও ও স্টুডিও ফাইল নিচে দেওয়া হলো:**")
+        
+        # 1. Send Ready-to-Upload Video
         with open(final_video, "rb") as video_file:
             caption = (
-                f"🎉 **আপনার স্ট্যান্ড-আপ কমেডি রিলস প্রস্তুত!**\n\n"
+                f"🎬 **AI Stand-Up Comedy Reels**\n"
                 f"💡 টপিক: {session['topic']}\n"
-                f"🗣️ ভাষা: {session['lang'].upper()}\n"
-                f"⏱️ সময়কাল: {int(voice_res['duration'])} সেকেন্ড\n\n"
-                f"📲 Instagram Reels, YouTube Shorts বা TikTok-এ আপলোড করতে ডাউনলোড করুন!"
+                f"🗣️ ভাষা: {session['lang'].upper()} ({int(voice_res['duration'])}s)\n\n"
+                f"✨ সরাসরি সোশ্যাল মিডিয়ায় পোস্ট করার উপযোগী!"
             )
             await query.message.reply_video(
                 video=video_file,
@@ -201,9 +202,33 @@ async def execute_full_video_pipeline(query, session: dict):
                 parse_mode="Markdown"
             )
 
+        # 2. Send Clean Voice File for Kling AI / CapCut
+        with open(voice_res["audio_path"], "rb") as audio_file:
+            await query.message.reply_audio(
+                audio=audio_file,
+                title="Comedian Voice Audio",
+                performer="AI Studio",
+                caption="🎙️ **Kling AI / CapCut-এ ব্যবহারের জন্য আলাদা ভয়েস ফাইল (.mp3)**"
+            )
+
+        # 3. Send Character Image
+        with open(char_path, "rb") as photo_file:
+            await query.message.reply_photo(
+                photo=photo_file,
+                caption="🖼️ **কমেডিয়ান ফ্রেম (Kling AI Lip-Sync-এ আপলোড করার জন্য)**"
+            )
+
+        # 4. Instructions
+        guide_text = (
+            "💡 **১-ক্লিক Kling AI / CapCut টিপস:**\n"
+            "1. **Kling AI (klingai.com):** 'AI Avatar / Lip Sync'-এ গিয়ে উপরের ছবি ও অডিওটি আপলোড করলেই পারফেক্ট মুখ নাড়ানো ভিডিও হয়ে যাবে।\n"
+            "2. **CapCut Web:** ভিডিওটি নিয়ে 'Auto Captions' অন করলেই আরও গর্জিয়াস রিলস ইফেক্ট পাবেন!"
+        )
+        await query.message.reply_text(guide_text)
+
     except Exception as e:
         logger.exception("Pipeline failed")
-        await query.message.reply_text(f"⚠️ দুঃখিত, ভিডিও তৈরির সময় একটি সমস্যা হয়েছে: {e}")
+        await query.message.reply_text(f"⚠️ দুঃখিত, সমস্যা হয়েছে: {e}")
 
 def create_bot_app() -> Application:
     """Builds and returns the Telegram Application instance."""
@@ -219,4 +244,3 @@ def create_bot_app() -> Application:
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message_handler))
 
     return app
-
