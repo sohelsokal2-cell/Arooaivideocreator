@@ -1,25 +1,35 @@
-# Environment variables (Credentials & API keys)
-.env
-
-# Python artifacts
+# Python Bytecode and Cache
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
-env/
+*.pyo
+
+# Virtual Environments
 venv/
+env/
+ENV/
 .venv/
 
-# Outputs and temp files
-outputs/
-*.mp4
-!assets/**
+# Environment Variables & API Keys (CRITICAL SECURITY)
+.env
+*.env
+!.env.example
+.pipeline_state.json
 
-# Sample large input video
+# Temporary & Heavy Output directories (Videos, Slides, Raw Audio)
+**/output/
+**/temp/
+**/runs/
+**/temp_caption_pills/
+**/temp_scene_clips/
 *.mp4
+*.mp3
+*.wav
 
-# OS generated files
+# OS & Editor Files
 .DS_Store
 Thumbs.db
-
+desktop.ini
+.vscode/
+.idea/
+*.log

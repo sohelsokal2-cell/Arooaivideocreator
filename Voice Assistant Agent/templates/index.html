@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>বাঙালি ফ্যাক্টস — এআই স্টুডিও ড্যাশবোর্ড</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+    
+    :root {
+      --bg-base: #0d0d12;
+      --bg-surface: #14141c;
+      --bg-card: #1c1c27;
+      --bg-input: #101017;
+      --border: #2b2b3d;
+      --brand: #e11d48;
+      --brand-hover: #be123c;
+      --brand-glow: rgba(225, 29, 72, 0.3);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-green: #10b981;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      background: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* Header */
+    header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-box { display: flex; align-items: center; gap: 12px; }
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e11d48, #9f1239);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 15px var(--brand-glow);
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(225, 29, 72, 0.15);
+      color: var(--brand);
+      border: 1px solid rgba(225, 29, 72, 0.3);
+    }
+    .brand-sub { font-size: 12px; color: var(--text-muted); }
+
+    /* Tabs */
+    .tabs-nav {
+      display: flex;
+      background: var(--bg-base);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      gap: 4px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover { color: #fff; }
+    .tab-btn.active {
+      background: var(--brand);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--brand-glow);
+    }
+
+    /* Container */
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Cards Grid */
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .stat-val { font-size: 14px; font-weight: 700; }
+    .stat-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    /* Runner Box */
+    .runner-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 18px;
+      margin-bottom: 24px;
+    }
+    .runner-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .runner-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .action-group { display: flex; align-items: center; gap: 12px; }
+    select, input[type="text"], input[type="password"] {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    select:focus, input:focus { border-color: var(--brand); }
+
+    .btn-run {
+      background: linear-gradient(135deg, var(--brand), #be123c);
+      color: #fff;
+      border: none;
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px var(--brand-glow);
+      transition: transform 0.1s, background 0.2s;
+    }
+    .btn-run:active { transform: scale(0.97); }
+    .btn-run:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Progress Bar */
+    .progress-wrap { margin-bottom: 20px; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: #e5e7eb; margin-bottom: 8px; }
+    .progress-track {
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      height: 14px;
+      border-radius: 8px;
+      overflow: hidden;
+      padding: 2px;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #e11d48, #f43f5e, #fb7185);
+      height: 100%;
+      width: 0%;
+      border-radius: 6px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px var(--brand-glow);
+    }
+
+    /* 8 Agent Steps */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 8px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .step-badge {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 10px 6px;
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .step-badge.done {
+      background: rgba(16, 185, 129, 0.15) !important;
+      border-color: var(--accent-green) !important;
+      color: #6ee7b7 !important;
+    }
+    .step-badge.active {
+      background: rgba(225, 29, 72, 0.25) !important;
+      border-color: var(--brand) !important;
+      color: #fff !important;
+      font-weight: 700;
+      box-shadow: 0 0 14px var(--brand-glow);
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Layout 2 Columns */
+    .grid-main {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 992px) { .grid-main { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Terminal */
+    .terminal-box {
+      background: #09090d;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'Consolas', monospace;
+      font-size: 12px;
+      color: #34d399;
+      height: 380px;
+      overflow-y: auto;
+      line-height: 1.5;
+    }
+    .term-line { margin-bottom: 4px; word-break: break-all; }
+    .term-dim { color: #6b7280; }
+
+    /* Video Preview & Links */
+    .video-box {
+      width: 100%;
+      height: 240px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .video-box video { width: 100%; height: 100%; object-fit: cover; }
+    .links-box {
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 12px;
+    }
+    .links-box a { color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+    .links-box a:hover { text-decoration: underline; }
+
+    /* Chat Section */
+    .chat-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .chat-bubble.bot {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      align-self: flex-start;
+      border-top-left-radius: 4px;
+    }
+    .chat-bubble.user {
+      background: var(--brand);
+      color: #fff;
+      align-self: flex-end;
+      border-top-right-radius: 4px;
+    }
+    .chat-input-row {
+      display: flex;
+      gap: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+    .chat-input-row input { flex: 1; }
+
+    /* API Settings Filter Tabs */
+    .api-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    .api-filter-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .api-filter-btn:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
+    .api-filter-btn.active {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+      box-shadow: 0 2px 10px var(--brand-glow);
+    }
+    .agent-step-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* API Cards */
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 22px;
+    }
+    .api-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .api-card:hover {
+      border-color: rgba(225, 29, 72, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .api-card.saving {
+      border-color: var(--brand);
+      box-shadow: 0 0 15px var(--brand-glow);
+    }
+    .api-card.saved {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    }
+    .api-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+    .card-title-box { display: flex; align-items: center; gap: 10px; }
+    .card-agent-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .api-card-head h3 { font-size: 15px; font-weight: 700; color: #fff; }
+    .api-card-head p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .card-actions-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn-add-key {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-add-key:hover { background: #3b82f6; color: #fff; }
+
+    .btn-agent-save {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-agent-save:hover { background: var(--accent-green); color: #fff; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+
+    .field-group { margin-bottom: 14px; }
+    .field-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .field-label { font-size: 11px; color: #94a3b8; font-family: 'Consolas', monospace; font-weight: 600; }
+    .field-hint { font-size: 10px; color: #64748b; margin-left: 6px; }
+    .btn-del-key {
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      font-size: 11px;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+      padding: 2px 4px;
+    }
+    .btn-del-key:hover { opacity: 1; color: #f87171; }
+    
+    .input-with-actions {
+      display: flex;
+      position: relative;
+      align-items: center;
+    }
+    .input-with-actions input {
+      width: 100%;
+      background: #0f0f16;
+      font-family: 'Consolas', monospace;
+      font-size: 12px;
+      padding: 9px 70px 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: #f1f5f9;
+      transition: border 0.2s;
+    }
+    .input-with-actions input:focus { border-color: var(--brand); }
+    .input-action-btns {
+      position: absolute;
+      right: 6px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .icon-action-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 5px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .icon-action-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
+    /* Toast Notification */
+    #toast-notification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--accent-green);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 999;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* Modern Dark Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal-box {
+      background: #181824;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      width: 90%;
+      max-width: 460px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(225, 29, 72, 0.15);
+      transform: translateY(0);
+      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+    }
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+    }
+    .modal-close-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+    .modal-field {
+      margin-bottom: 16px;
+    }
+    .modal-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .modal-input {
+      width: 100%;
+      background: #0d0d14;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .modal-input:focus { border-color: var(--brand); }
+
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .btn-modal-cancel {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e5e7eb;
+      border: 1px solid var(--border);
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-modal-cancel:hover { background: rgba(255, 255, 255, 0.15); }
+    .btn-modal-confirm {
+      background: linear-gradient(135deg, var(--brand), #be123c);
+      color: #fff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--brand-glow);
+    }
+    .btn-modal-confirm:hover { background: #be123c; }
+
+    .btn-save {
+      background: var(--accent-green);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand-box">
+      <div class="brand-logo">🐯</div>
+      <div>
+        <div class="brand-title">
+          বাঙালি ফ্যাক্টস <span class="badge">AI STUDIO PRO</span>
+        </div>
+        <div class="brand-sub">সম্পূর্ণ স্বয়ংক্রিয় এআই রিলস স্টুডিও ড্যাশবোর্ড (@bangaliifacts)</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-nav">
+      <button onclick="setTab('pipeline')" id="tab-pipeline" class="tab-btn active">
+        <i class="fa-solid fa-play"></i> পাইপলাইন মনিটর
+      </button>
+      <button onclick="setTab('assistant')" id="tab-assistant" class="tab-btn">
+        <i class="fa-solid fa-headset"></i> এআই ভয়েস সহকারী
+      </button>
+      <button onclick="setTab('api')" id="tab-api" class="tab-btn">
+        <i class="fa-solid fa-key"></i> এপিআই সেটিংস
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- TAB 1: PIPELINE -->
+    <div id="view-pipeline">
+      <!-- 4 Top Status Cards -->
+      <div class="grid-4">
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">সর্বশেষ আলোচিত খবর</div>
+            <div class="stat-val" id="stat-headline" style="color: #60a5fa; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">লোড হচ্ছে...</div>
+          </div>
+          <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">
+            <i class="fa-solid fa-newspaper"></i>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">ফেসবুক পাবলিশার</div>
+            <div class="stat-val" style="color: #34d399;">সক্রিয় (Direct/Schedule)</div>
+          </div>
+          <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+            <i class="fa-brands fa-facebook"></i>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">ইউটিউব শর্টস</div>
+            <div class="stat-val" style="color: #f87171;">সক্রিয় (Public/Schedule)</div>
+          </div>
+          <div class="stat-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">
+            <i class="fa-brands fa-youtube"></i>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-label">সিস্টেম অবস্থা</div>
+            <div class="stat-val" id="stat-system">প্রস্তুত (Idle)</div>
+          </div>
+          <div class="stat-icon" style="background: rgba(139, 92, 246, 0.15); color: #c084fc;">
+            <i class="fa-solid fa-server"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Runner Box -->
+      <div class="runner-box">
+        <div class="runner-header">
+          <div>
+            <div class="runner-title">
+              <span class="pulse-dot"></span> এআই রিলস রানার ও শিডিউলার
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+              ৮টি এআই এজেন্ট সংবাদের সত্যতা যাচাই করে অটোম্যাটিক রিল তৈরি ও পাবলিশ করবে।
+            </div>
+          </div>
+
+          <div class="action-group">
+            <select id="run-mode">
+              <option value="DIRECT">🚀 সরাসরি পোস্ট (Direct Publish)</option>
+              <option value="SCHEDULE">⏰ পিক আওয়ারে শিডিউল (Schedule Post)</option>
+            </select>
+            <button id="btn-run" class="btn-run" onclick="triggerPipeline()">
+              <i class="fa-solid fa-bolt"></i> নতুন রিল তৈরি করুন
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span id="progress-agent-label">অপেক্ষা করা হচ্ছে...</span>
+            <span id="progress-percent">০%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progress-bar" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- 8 Agent Steps -->
+        <div class="steps-grid">
+          <div class="step-badge" id="step-1" data-step="1">১. নিউজ সংগ্রহ</div>
+          <div class="step-badge" id="step-2" data-step="2">২. স্ক্রিপ্ট তৈরি</div>
+          <div class="step-badge" id="step-3" data-step="3">৩. ভয়েস-ওভার</div>
+          <div class="step-badge" id="step-4" data-step="4">৪. স্লাইড তৈরি</div>
+          <div class="step-badge" id="step-5" data-step="5">৫. ভিডিও রেন্ডার</div>
+          <div class="step-badge" id="step-6" data-step="6">৬. থাম্বনেইল</div>
+          <div class="step-badge" id="step-7" data-step="7">৭. ফেসবুক রিল</div>
+          <div class="step-badge" id="step-8" data-step="8">৮. ইউটিউব শর্টস</div>
+        </div>
+      </div>
+
+      <!-- Main Layout: Terminal & Video Preview -->
+      <div class="grid-main">
+        <div class="panel">
+          <div class="panel-header">
+            <span><i class="fa-solid fa-terminal" style="color: var(--brand);"></i> লাইভ এক্সিকিউশন কনসোল (রিয়েল-টাইম ভিউ)</span>
+            <span style="font-size: 11px;">Polling: 1s</span>
+          </div>
+          <div id="terminal-box" class="terminal-box">
+            <div class="term-dim">// পাইপলাইন রান করলে প্রতিটি এজেন্টের রিয়েল-টাইম লগ এখানে দেখা যাবে...</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span><i class="fa-solid fa-film" style="color: var(--accent-purple);"></i> সর্বশেষ রিল ভিডিও</span>
+          </div>
+          <div class="video-box">
+            <video id="preview-video-player" controls>
+              <source src="/api/preview/video" type="video/mp4">
+            </video>
+          </div>
+
+          <div class="panel-header" style="margin-top: 10px;">
+            <span><i class="fa-solid fa-link" style="color: #38bdf8;"></i> প্রকাশিত পোস্ট লিংক</span>
+          </div>
+          <div class="links-box" id="published-links">
+            <span class="term-dim">কোনো সক্রিয় পোস্ট পাওয়া যায়নি।</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: VOICE ASSISTANT -->
+    <div id="view-assistant" style="display: none;">
+      <div class="chat-container">
+        <div class="panel-header">
+          <span><i class="fa-solid fa-headset" style="color: var(--brand);"></i> এআই ভয়েস সহকারী চ্যাট</span>
+          <label style="font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: none;">
+            <input type="checkbox" id="chk-auto-speak" checked> কথা বলা চালু রাখুন (বাংলা TTS)
+          </label>
+        </div>
+
+        <div id="chat-messages" class="chat-messages">
+          <div class="chat-bubble bot">
+            নমস্কার! আমি বাঙালি ফ্যাক্টস এর এআই ভয়েস অ্যাসিস্ট্যান্ট। আমাকে নতুন রিল বানাতে, আজকের খবর জানতে বা লিংক চেক করতে বলতে পারেন।
+          </div>
+        </div>
+
+        <div class="chat-input-row">
+          <input type="text" id="assistant-input" placeholder="লিখুন: 'নতুন রিল বানাও', 'আজকের খবর কি', বা 'স্ট্যাটাস বলো'..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+          <button class="btn-run" onclick="sendChatMessage()">
+            <i class="fa-solid fa-paper-plane"></i> পাঠান
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: API CONFIGS -->
+    <div id="view-api" style="display: none;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 style="font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-sliders" style="color: var(--brand);"></i> সেন্ট্রাল এআই এজেন্ট সেটিংস ও এপিআই হাব
+          </h2>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">
+            পাইপলাইনের ধাপ অনুযায়ী প্রতিটি এজেন্টের কি, মডেল ও ক্রেডেনশিয়াল সাজানো হয়েছে।
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-save" style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #93c5fd;" onclick="loadAllConfigs()">
+            <i class="fa-solid fa-arrows-rotate"></i> রিফ্রেশ
+          </button>
+          <button class="btn-save" onclick="saveConfigs()">
+            <i class="fa-solid fa-floppy-disk"></i> সমস্ত পরিবর্তন সেভ করুন
+          </button>
+        </div>
+      </div>
+
+      <!-- Step-by-Step Filter Navigation -->
+      <div class="api-filter-bar">
+        <button class="api-filter-btn active" onclick="filterAgentCard('all', this)">
+          <i class="fa-solid fa-list-check"></i> সব এজেন্ট (৬)
+        </button>
+        <button class="api-filter-btn" onclick="filterAgentCard('news', this)">
+          <span class="agent-step-pill">ধাপ ১</span> নিউজ কালেক্টর
+        </button>
+        <button class="api-filter-btn" onclick="filterAgentCard('writer', this)">
+          <span class="agent-step-pill">ধাপ ২</span> স্ক্রিপ্ট রাইটার
+        </button>
+        <button class="api-filter-btn" onclick="filterAgentCard('voice', this)">
+          <span class="agent-step-pill">ধাপ ৩</span> ভয়েস-ওভার পুল
+        </button>
+        <button class="api-filter-btn" onclick="filterAgentCard('facebook', this)">
+          <span class="agent-step-pill">ধাপ ৭</span> ফেসবুক পাবলিশার
+        </button>
+        <button class="api-filter-btn" onclick="filterAgentCard('youtube', this)">
+          <span class="agent-step-pill">ধাপ ৮</span> ইউটিউব শর্টস
+        </button>
+        <button class="api-filter-btn" onclick="filterAgentCard('assistant', this)">
+          <i class="fa-solid fa-headset" style="font-size: 11px;"></i> ভয়েস সহকারী
+        </button>
+      </div>
+
+      <div class="api-grid" id="api-grid-container">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Notification element -->
+  <div id="toast-notification">
+    <i class="fa-solid fa-circle-check" style="color: var(--accent-green); font-size: 16px;"></i>
+    <span id="toast-message">সফলভাবে সম্পন্ন হয়েছে!</span>
+  </div>
+
+  <!-- Modern Add Key Modal -->
+  <div id="add-key-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-key" style="color: var(--brand);"></i> নতুন এপিআই কী যুক্ত করুন
+        </div>
+        <button class="modal-close-btn" onclick="closeAddKeyModal()">&times;</button>
+      </div>
+      <input type="hidden" id="modal-target-agent">
+      <div class="modal-field">
+        <label class="modal-label">এজেন্ট</label>
+        <div id="modal-agent-name" style="font-size: 13px; font-weight: 700; color: #60a5fa; margin-bottom: 10px;"></div>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="modal-key-name">কী (Key) এর নাম (যেমন: GEMINI_API_KEY_11 বা GROQ_KEY)</label>
+        <input type="text" id="modal-key-name" class="modal-input" placeholder="e.g. GEMINI_API_KEY_6">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="modal-key-val">কী এর ভ্যালু (Secret Value)</label>
+        <input type="password" id="modal-key-val" class="modal-input" placeholder="API key বা Token পেস্ট করুন...">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" onclick="closeAddKeyModal()">বাতিল</button>
+        <button type="button" class="btn-modal-confirm" onclick="confirmAddKey()">
+          <i class="fa-solid fa-plus"></i> যুক্ত করুন
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Core -->
+  <script>
+    function setTab(tab) {
+      document.getElementById('view-pipeline').style.display = tab === 'pipeline' ? 'block' : 'none';
+      document.getElementById('view-assistant').style.display = tab === 'assistant' ? 'block' : 'none';
+      document.getElementById('view-api').style.display = tab === 'api' ? 'block' : 'none';
+
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+
+      if (tab === 'api') loadAllConfigs();
+    }
+
+    // Toast notification
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast-notification');
+      const text = document.getElementById('toast-message');
+      const icon = toast.querySelector('i');
+      text.innerText = msg;
+      if (isError) {
+        toast.style.borderColor = '#ef4444';
+        icon.className = 'fa-solid fa-circle-exclamation';
+        icon.style.color = '#ef4444';
+      } else {
+        toast.style.borderColor = 'var(--accent-green)';
+        icon.className = 'fa-solid fa-circle-check';
+        icon.style.color = 'var(--accent-green)';
+      }
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // Toggle Password Visibility Eye Button
+    function toggleEye(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+        btn.title = "লুকাতে ক্লিক করুন";
+      } else {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye';
+        btn.title = "দেখতে ক্লিক করুন";
+      }
+    }
+
+    // Copy to clipboard
+    function copyFieldValue(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input || !input.value) {
+        showToast("কপি করার মতো কিছু নেই!", true);
+        return;
+      }
+      navigator.clipboard.writeText(input.value).then(() => {
+        showToast("ক্লিপবোর্ডে কপি করা হয়েছে!");
+        const icon = btn.querySelector('i');
+        icon.className = 'fa-solid fa-check';
+        setTimeout(() => { icon.className = 'fa-solid fa-copy'; }, 1500);
+      }).catch(() => {
+        showToast("কপি ব্যর্থ হয়েছে", true);
+      });
+    }
+
+    // Delete a key
+    function deleteKey(fieldGroupId, keyName) {
+      if (confirm(`আপনি কি নিশ্চিত যে '${keyName}' ভ্যারিয়েবলটি মুছে ফেলতে চান?`)) {
+        const el = document.getElementById(fieldGroupId);
+        if (el) el.remove();
+        showToast(`'${keyName}' সাময়িকভাবে মুছে ফেলা হয়েছে। পরিবর্তন নিশ্চিত করতে সেভ বাটনে চাপ দিন।`);
+      }
+    }
+
+    // Add New Key Modal Handlers
+    const agentLabelsMap = {
+      news: "১. News Collector Agent",
+      writer: "২. Writer Agent",
+      voice: "৩. Voice Over Agent",
+      facebook: "৭. Facebook Manage Agent",
+      youtube: "৮. YouTube Manage Agent",
+      assistant: "ভয়েস অ্যাসিস্ট্যান্ট"
+    };
+
+    function openAddKeyModal(agent) {
+      document.getElementById('modal-target-agent').value = agent;
+      document.getElementById('modal-agent-name').innerText = agentLabelsMap[agent] || agent;
+      document.getElementById('modal-key-name').value = '';
+      document.getElementById('modal-key-val').value = '';
+      document.getElementById('add-key-modal').style.display = 'flex';
+      setTimeout(() => document.getElementById('modal-key-name').focus(), 100);
+    }
+
+    function closeAddKeyModal() {
+      document.getElementById('add-key-modal').style.display = 'none';
+    }
+
+    function confirmAddKey() {
+      const agent = document.getElementById('modal-target-agent').value;
+      const keyInput = document.getElementById('modal-key-name');
+      const valInput = document.getElementById('modal-key-val');
+
+      const rawKey = keyInput.value.trim();
+      if (!rawKey) {
+        showToast("অনুগ্রহ করে কী (Key) এর নাম দিন", true);
+        keyInput.focus();
+        return;
+      }
+
+      const cleanKey = rawKey.toUpperCase().replace(/\s+/g, '_');
+
+      // ডুপ্লিকেট চেক
+      const existing = document.querySelector(`input[data-agent="${agent}"][data-key="${cleanKey}"]`);
+      if (existing) {
+        showToast(`'${cleanKey}' ইতিমধ্যে এই এজেন্টে বিদ্যমান রয়েছে!`, true);
+        closeAddKeyModal();
+        existing.focus();
+        return;
+      }
+
+      const val = valInput.value.trim();
+      const cardBody = document.getElementById(`fields-${agent}`);
+      if (!cardBody) return;
+
+      const fieldId = `field_${agent}_${cleanKey}_${Date.now()}`;
+      const groupId = `group_${fieldId}`;
+      const isSecret = cleanKey.includes('KEY') || cleanKey.includes('SECRET') || cleanKey.includes('TOKEN');
+
+      const newFieldHtml = `
+        <div class="field-group" id="${groupId}">
+          <div class="field-label-row">
+            <span class="field-label">${cleanKey} <span style="color:#60a5fa; font-weight: bold;">(New)</span></span>
+            <button type="button" class="btn-del-key" onclick="deleteKey('${groupId}', '${cleanKey}')" title="মুছে ফেলুন">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+          <div class="input-with-actions">
+            <input type="${isSecret ? 'password' : 'text'}" id="${fieldId}" data-agent="${agent}" data-key="${cleanKey}" value="${val}">
+            <div class="input-action-btns">
+              <button type="button" class="icon-action-btn" onclick="copyFieldValue('${fieldId}', this)" title="কপি করুন">
+                <i class="fa-solid fa-copy"></i>
+              </button>
+              ${isSecret ? `
+              <button type="button" class="icon-action-btn" onclick="toggleEye('${fieldId}', this)" title="দেখতে ক্লিক করুন">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+      cardBody.insertAdjacentHTML('beforeend', newFieldHtml);
+      closeAddKeyModal();
+      showToast(`'${cleanKey}' যুক্ত হয়েছে। এই এজেন্টের সেভ বাটনে চাপ দিন।`);
+    }
+
+    // Escape বা বাইরে ক্লিকে মডাল বন্ধ
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeAddKeyModal();
+      if (e.key === 'Enter' && document.getElementById('add-key-modal').style.display === 'flex') {
+        confirmAddKey();
+      }
+    });
+
+    document.getElementById('add-key-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'add-key-modal') closeAddKeyModal();
+    });
+
+    // Trigger Pipeline
+    async function triggerPipeline() {
+      const mode = document.getElementById('run-mode').value;
+      const btn = document.getElementById('btn-run');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> পাইপলাইন শুরু হচ্ছে...`;
+
+      try {
+        const res = await fetch('/api/pipeline/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: mode, voice_notify: true })
+        });
+        const d = await res.json();
+        // বাটন এখনই রিলিজ করব না, polling ফাংশন দেখবে পাইপলাইন শেষ হয়েছে কিনা
+        setTimeout(pollDashboard, 300);
+      } catch (err) {
+        alert("ত্রুটি: " + err.message);
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-bolt"></i> নতুন রিল তৈরি করুন`;
+      }
+    }
+
+    let previousVideoUrl = '';
+
+    // Realtime Polling Dashboard (1s interval for instant responsiveness)
+    async function pollDashboard() {
+      try {
+        const res = await fetch('/api/pipeline/status');
+        const data = await res.json();
+
+        const btn = document.getElementById('btn-run');
+        if (data.is_running) {
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> কাজ চলছে...`;
+          btn.style.opacity = '0.8';
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-bolt"></i> নতুন রিল তৈরি করুন`;
+          btn.style.opacity = '1';
+        }
+
+        // Progress Calculation
+        let step = data.current_step || 0;
+        let total = data.total_steps || 8;
+        let percent = 0;
+
+        if (data.is_running) {
+          if (step <= 1) percent = 12;
+          else if (step >= 8) percent = 95;
+          else percent = Math.min(95, Math.round((step / total) * 100));
+        } else if (data.last_status === 'success' || (step === 8 && !data.is_running)) {
+          percent = 100;
+        }
+
+        document.getElementById('progress-bar').style.width = percent + '%';
+        document.getElementById('progress-percent').innerText = percent + '%';
+
+        let labelText = data.current_agent_name;
+        if (!labelText) {
+          labelText = data.is_running ? 'পাইপলাইন প্রসেস চলছে...' : (data.last_status === 'success' || step === 8 ? 'সম্পূর্ণ প্রস্তুত (Completed)' : 'অপেক্ষা করা হচ্ছে...');
+        }
+        document.getElementById('progress-agent-label').innerText = labelText;
+        document.getElementById('stat-system').innerText = data.is_running ? 'কাজ চলছে...' : 'প্রস্তুত (Idle)';
+
+        // 8 Step Badges Sync
+        for (let s = 1; s <= 8; s++) {
+          const badge = document.getElementById('step-' + s);
+          if (!badge) continue;
+
+          if (data.last_status === 'success' || (step === 8 && !data.is_running)) {
+            badge.className = 'step-badge done';
+          } else if (data.is_running) {
+            if (s < step) {
+              badge.className = 'step-badge done';
+            } else if (s === step) {
+              badge.className = 'step-badge active';
+            } else {
+              badge.className = 'step-badge';
+            }
+          } else {
+            badge.className = 'step-badge';
+          }
+        }
+
+        // Terminal Logs (Realtime stream)
+        if (data.recent_logs && data.recent_logs.length) {
+          const term = document.getElementById('terminal-box');
+          term.innerHTML = data.recent_logs.map(l => `<div class="term-line">> ${l}</div>`).join('');
+          term.scrollTop = term.scrollHeight;
+        }
+
+        // Headline
+        if (data.context) {
+          const m = data.context.match(/সর্বশেষ খবর:\s*(.*?)\s*\|/);
+          if (m && m[1]) document.getElementById('stat-headline').innerText = m[1];
+        }
+
+        // Auto Refresh Video on Completion or when video file updates
+        const videoStamp = data.context ? encodeURIComponent(data.context.slice(0, 40)) : '1';
+        if (!data.is_running) {
+          const player = document.getElementById('preview-video-player');
+          const cacheBuster = '/api/preview/video?t=' + videoStamp;
+          if (player && previousVideoUrl !== cacheBuster) {
+            previousVideoUrl = cacheBuster;
+            player.src = cacheBuster;
+            player.load();
+          }
+        }
+
+        // Published Links
+        if (data.published_links) {
+          const container = document.getElementById('published-links');
+          const lines = data.published_links.split('\n');
+          container.innerHTML = lines.map(l => {
+            const m = l.match(/(https?:\/\/[^\s]+)/);
+            if (m) {
+              return `<div><a href="${m[0]}" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> ${l}</a></div>`;
+            }
+            return `<div>${l}</div>`;
+          }).join('');
+        }
+      } catch (e) {}
+    }
+    setInterval(pollDashboard, 1000);
+    pollDashboard();
+
+    // Assistant Chat
+    async function sendChatMessage() {
+      const inp = document.getElementById('assistant-input');
+      const msg = inp.value.trim();
+      if (!msg) return;
+      inp.value = '';
+
+      const box = document.getElementById('chat-messages');
+      box.innerHTML += `<div class="chat-bubble user">${msg}</div>`;
+      box.scrollTop = box.scrollHeight;
+
+      const speak = document.getElementById('chk-auto-speak').checked;
+      const res = await fetch('/api/assistant/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, speak: speak })
+      });
+      const d = await res.json();
+
+      let reply = `<p>${d.spoken}</p>`;
+      if (d.action_result) {
+        reply += `<div style="margin-top: 8px; font-family: monospace; font-size: 11px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; color: #6ee7b7; white-space: pre-wrap;">${d.action_result}</div>`;
+      }
+      box.innerHTML += `<div class="chat-bubble bot">${reply}</div>`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // Filter Agent Cards
+    function filterAgentCard(agentKey, btn) {
+      document.querySelectorAll('.api-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cards = document.querySelectorAll('.api-card');
+      cards.forEach(card => {
+        if (agentKey === 'all') {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = card.id === `card-${agentKey}` ? 'flex' : 'none';
+        }
+      });
+    }
+
+    // Agent Meta Data (Step by step pipeline order)
+    const AGENTS_META = {
+      news: {
+        step: "১",
+        title: "News Collector Agent",
+        sub: "সংবাদ সংগ্রহ, ক্রস-চেক ও বহু-উৎস বিশ্লেষণ",
+        icon: "fa-newspaper",
+        iconBg: "rgba(59, 130, 246, 0.15)",
+        iconColor: "#60a5fa",
+        hintMap: {
+          GROQ_API_KEY: "সংবাদ খোঁজা ও ফিল্টারিং ব্রেন (Groq)",
+          GROQ_MODEL: "ব্যবহারকৃত মডেল (e.g. openai/gpt-oss-120b)"
+        }
+      },
+      writer: {
+        step: "২",
+        title: "Writer Agent",
+        sub: "সংবাদ থেকে ৪৫-৬০ সেকেন্ড খাঁটি বাংলা রিল স্ক্রিপ্ট তৈরি",
+        icon: "fa-pen-nib",
+        iconBg: "rgba(244, 63, 94, 0.15)",
+        iconColor: "#fb7185",
+        hintMap: {
+          GEMINI_API_KEY: "গুগল জেমিনি এপিআই কি (স্ক্রিপ্ট রাইটার)",
+          GEMINI_MODEL: "মডেল (e.g. gemini-3.5-flash-lite)"
+        }
+      },
+      voice: {
+        step: "৩",
+        title: "Voice Over Agent",
+        sub: "১০টি জেমিনি কি ফেইলওভার পুল + স্টুডিও অডিও",
+        icon: "fa-microphone-lines",
+        iconBg: "rgba(168, 85, 247, 0.15)",
+        iconColor: "#c084fc",
+        hintMap: {
+          DEFAULT_VOICE: "ডিফল্ট কণ্ঠ (Kore / Charon)",
+          PAUSE_SECONDS: "বাক্যের শেষে পজ (০.৮ সেকেন্ড আদর্শ)",
+          VOICE_SPEED: "কথা বলার গতি (০.৯২ স্বাভাবিক)",
+          FALLBACK_TO_EDGE_TTS: "ফেইলওভার এজ-টিটিএস ব্যাকআপ"
+        }
+      },
+      facebook: {
+        step: "৭",
+        title: "Facebook Page Manage Agent",
+        sub: "মেটা গ্রাফ এপিআই + Groq AI অটো-পাবলিশিং",
+        icon: "fa-facebook",
+        iconBg: "rgba(16, 185, 129, 0.15)",
+        iconColor: "#34d399",
+        hintMap: {
+          FB_PAGE_ID: "ফেসবুক পেজ আইডি (বাঙালি ফ্যাক্টস)",
+          FB_PAGE_ACCESS_TOKEN: "মেটা সিস্টেম ইউজার পার্মানেন্ট টোকেন",
+          FB_GROQ_API_KEY: "ক্যাপশন ও হ্যাশট্যাগ তৈরির Groq কি",
+          PUBLISH_MODE: "পাবলিশ মোড (DIRECT বা SCHEDULE)"
+        }
+      },
+      youtube: {
+        step: "৮",
+        title: "YouTube Page Manage Agent",
+        sub: "OAuth 2.0 রিফ্রেশ টোকেন + Groq AI শর্টস আপলোড",
+        icon: "fa-youtube",
+        iconBg: "rgba(239, 68, 68, 0.15)",
+        iconColor: "#f87171",
+        hintMap: {
+          YT_CLIENT_ID: "গুগল ক্লাউড ক্লায়েন্ট আইডি",
+          YT_CLIENT_SECRET: "গুগল ক্লাউড ক্লায়েন্ট সিক্রেট",
+          YT_REFRESH_TOKEN: "ইউটিউব পার্মানেন্ট রিফ্রেশ টোকেন",
+          YT_PUBLISH_MODE: "শর্টস মোড (PUBLIC বা SCHEDULE)"
+        }
+      },
+      assistant: {
+        step: "AI",
+        title: "Voice Assistant Agent",
+        sub: "সেন্ট্রাল কন্ট্রোল ব্রেন ও বাংলা ভয়েস গাইডেন্স",
+        icon: "fa-headset",
+        iconBg: "rgba(245, 158, 11, 0.15)",
+        iconColor: "#fbbf24",
+        hintMap: {
+          VA_GROQ_API_KEY: "ভয়েস কমান্ড অ্যানালাইজার Groq কি",
+          VA_TTS_VOICE: "Edge-TTS কণ্ঠ (bn-BD-NabanitaNeural)"
+        }
+      }
+    };
+
+    // Config Manager
+    async function loadAllConfigs() {
+      const container = document.getElementById('api-grid-container');
+      container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: var(--brand); margin-bottom: 12px; display: block;"></i>
+          ধাপ অনুযায়ী কনফিগারেশন ও এপিআই কি লোড হচ্ছে...
+        </div>
+      `;
+
+      try {
+        const res = await fetch('/api/configs');
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const configs = await res.json();
+        container.innerHTML = '';
+
+        // পাইপলাইনের সঠিক ক্রমানুসারে সাজানো
+        const orderedAgents = ["news", "writer", "voice", "facebook", "youtube", "assistant"];
+
+        for (const agent of orderedAgents) {
+          const cfg = configs[agent] || {};
+          const meta = AGENTS_META[agent] || {
+            step: "•",
+            title: agent,
+            sub: "",
+            icon: "fa-gear",
+            iconBg: "rgba(255,255,255,0.1)",
+            iconColor: "#fff",
+            hintMap: {}
+          };
+
+          let fields = '';
+          let idx = 0;
+          for (const [k, v] of Object.entries(cfg)) {
+            idx++;
+            const isSecret = k.includes('KEY') || k.includes('SECRET') || k.includes('TOKEN');
+            const inputId = `field_${agent}_${idx}`;
+            const groupId = `group_${inputId}`;
+            const hint = meta.hintMap[k] ? `<span class="field-hint">(${meta.hintMap[k]})</span>` : '';
+
+            fields += `
+              <div class="field-group" id="${groupId}">
+                <div class="field-label-row">
+                  <span class="field-label">${k} ${hint}</span>
+                  <button type="button" class="btn-del-key" onclick="deleteKey('${groupId}', '${k}')" title="মুছে ফেলুন">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
+                <div class="input-with-actions">
+                  <input type="${isSecret ? 'password' : 'text'}" id="${inputId}" data-agent="${agent}" data-key="${k}" value="${v}">
+                  <div class="input-action-btns">
+                    <button type="button" class="icon-action-btn" onclick="copyFieldValue('${inputId}', this)" title="কপি করুন">
+                      <i class="fa-solid fa-copy"></i>
+                    </button>
+                    ${isSecret ? `
+                    <button type="button" class="icon-action-btn" onclick="toggleEye('${inputId}', this)" title="দেখতে ক্লিক করুন">
+                      <i class="fa-solid fa-eye"></i>
+                    </button>
+                    ` : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+
+          container.innerHTML += `
+            <div class="api-card" id="card-${agent}">
+              <div class="api-card-head">
+                <div class="card-title-box">
+                  <div class="card-agent-icon" style="background: ${meta.iconBg}; color: ${meta.iconColor};">
+                    <i class="fa-solid ${meta.icon}"></i>
+                  </div>
+                  <div>
+                    <h3><span class="agent-step-pill">ধাপ ${meta.step}</span> ${meta.title}</h3>
+                    <p>${meta.sub}</p>
+                  </div>
+                </div>
+                <div class="card-actions-head">
+                  <button class="btn-add-key" onclick="openAddKeyModal('${agent}')">
+                    <i class="fa-solid fa-plus"></i> Key
+                  </button>
+                  <button class="btn-agent-save" onclick="saveAgentConfig('${agent}')" title="শুধু এই এজেন্ট সেভ করুন">
+                    <i class="fa-solid fa-floppy-disk"></i> সেভ
+                  </button>
+                </div>
+              </div>
+              <div id="fields-${agent}">${fields || '<div style="font-size: 12px; color: var(--text-muted); padding: 10px 0;">কোনো কনফিগ ফিল্ড পাওয়া যায়নি</div>'}</div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 12px; padding: 20px; text-align: center; color: #fca5a5;">
+            <i class="fa-solid fa-circle-exclamation" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+            এপিআই সেটিংস লোড করতে সমস্যা হয়েছে: ${err.message}<br>
+            <button onclick="loadAllConfigs()" style="margin-top: 12px; background: #e11d48; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">পুনরায় চেষ্টা করুন</button>
+          </div>
+        `;
+      }
+    }
+
+    // পেজ লোড হতেই ব্যাকগ্রাউন্ডে কনফিগ একবার ক্যাশ লোড করে রাখা
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAllConfigs();
+    });
+
+    // Single Agent Config Save
+    async function saveAgentConfig(agent) {
+      const card = document.getElementById(`card-${agent}`);
+      if (card) card.classList.add('saving');
+
+      const inputs = document.querySelectorAll(`#fields-${agent} input`);
+      const vals = {};
+      inputs.forEach(inp => {
+        const k = inp.dataset.key;
+        if (k) vals[k] = inp.value;
+      });
+
+      try {
+        const res = await fetch(`/api/configs/${agent}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(vals)
+        });
+        const d = await res.json();
+        if (d.success) {
+          if (card) {
+            card.classList.remove('saving');
+            card.classList.add('saved');
+            setTimeout(() => card.classList.remove('saved'), 2000);
+          }
+          showToast(`'${agent}' এর সেটিংস সফলভাবে সেভ করা হয়েছে!`);
+        } else {
+          showToast(`'${agent}' সেভ ব্যর্থ হয়েছে`, true);
+        }
+      } catch (err) {
+        showToast("ত্রুটি: " + err.message, true);
+      } finally {
+        if (card) card.classList.remove('saving');
+      }
+    }
+
+    // Save All Configs
+    async function saveConfigs() {
+      const inputs = document.querySelectorAll('#api-grid-container input');
+      const map = {};
+      inputs.forEach(inp => {
+        const a = inp.dataset.agent;
+        const k = inp.dataset.key;
+        if (!map[a]) map[a] = {};
+        if (k) map[a][k] = inp.value;
+      });
+
+      try {
+        for (const [agent, vals] of Object.entries(map)) {
+          await fetch(`/api/configs/${agent}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(vals)
+          });
+        }
+        showToast("✅ সমস্ত এজেন্টের এপিআই কি ও সেটিংস সফলভাবে সেভ করা হয়েছে!");
+      } catch (err) {
+        showToast("সেভ করতে সমস্যা হয়েছে: " + err.message, true);
+      }
+    }
+  </script>
+</body>
+</html>

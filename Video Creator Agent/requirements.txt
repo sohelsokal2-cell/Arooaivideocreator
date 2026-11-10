@@ -1,0 +1,10 @@
+# Video Creator Agent — runtime dependencies
+# Install with the same interpreter used by run.bat:
+#   python -m pip install -r requirements.txt
+# FFmpeg itself comes bundled with imageio-ffmpeg (no system install needed).
+
+opencv-python>=4.8.0
+numpy>=1.24.0
+imageio-ffmpeg>=0.4.9
+PyQt6>=6.5.0
+python-docx>=1.1.0
